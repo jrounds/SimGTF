@@ -1,0 +1,8 @@
+Package: SimGTF
+Title: Simulate RNA-seq counts for Ensembl GTFs
+Version: 0.0.0.9000
+Authors@R: person("Jeremiah", "Rounds", , "roundsjeremiah@gmail.com", role = c("aut", "cre"))
+Description: Simulate RNA-seq counts for Ensembl GTFs
+Depends: R (>= 3.1.2)
+License: All rights reserved accepted on correspondence with the author specifically releasing them.
+LazyData: true
