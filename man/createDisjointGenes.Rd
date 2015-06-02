@@ -2,6 +2,7 @@
 % Please edit documentation in R/functions.R
 \name{createDisjointGenes}
 \alias{createDisjointGenes}
+\title{createDisjointGenes}
 \usage{
 createDisjointGenes(dt)
 }
@@ -10,5 +11,8 @@ createDisjointGenes(dt)
 }
 \value{
 reduces a gene_id to its disjoint exon bins
+}
+\description{
+createDisjointGenes
 }
 

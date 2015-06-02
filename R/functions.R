@@ -1,4 +1,5 @@
-# setTerm
+#' setTerm
+#'
 #' @param color what color to change a linux terminal to
 setTerm = function(color){
 	system(paste("setterm -term linux -background", color))
@@ -8,7 +9,8 @@ upSimGTF = function(){
 	system("scp -rp /media/sf_work/15spring/working_SimGTF/SimGTF falconer.stat.purdue.edu:/noback/jrounds/SimGTF")
 	
 }
-# progressFunction
+#' progressFunction
+#'
 #' @param nrow total length of progress 
 #' @param foo function that will be procssed during progress
 progressFunction = function(nrow, foo){
@@ -21,7 +23,8 @@ progressFunction = function(nrow, foo){
 	}
 	return(foo2)
 }
-# readGTF
+#' readGTF
+#' 
 #' @param file source file to read (e.g. unzipped Ensembl gtf
 #' @param ... other arguments to read.table
 readGTF = function(file,...){
@@ -68,7 +71,8 @@ readGTF = function(file,...){
 #######################################################################################
 # processing into subexons
 #######################################################################################
-# fixTypes
+#' fixTypes
+#'
 #' @param d data.table on which to fix up types to a standard representatation for genomic data
 fixTypes = function(d){
 	if(class(d$strand) != "integer" && class(d$strand) != "numeric"){
@@ -85,13 +89,15 @@ fixTypes = function(d){
 	setkeyv(d, c("seqnames","strand","start"))
 	return(d)
 }
-# as.GRanges
+#' as.GRanges
+#'
 #' @param dt data.table to turn into a GRanges object
 as.GRanges = function(dt){
 	GRanges(seqname=dt$seqname, strand=dt$strand, 
 		ranges=IRanges(start=dt$start, end=dt$end))
 }
-# disjoinExon
+#' disjoinExon
+#' 
 #' @param dt disjoint_transcripts from a gtf_data object
 #' @param ignore.strand should disjoint counting bins be caculated by ignoring strand (as ooposed to over-lapping across strands?)
 #' @param id_lead leading string for a disjoint exon key field.
@@ -114,7 +120,8 @@ disjoinExons = function(dt, ignore.strand=FALSE, id_lead="dis"){
 }
 
 
-# createDisjointMap
+#' createDisjointMap
+#' 
 #' @param dt Object of class "Transcripts"
 #' @param disjoint Object from disjoinExons()
 #' @param ignore.strand was disjoint created ignoring strand?
@@ -137,7 +144,8 @@ createDisjointMap = function(dt, disjoint, ignore.strand=FALSE){
 	return(gene_sub_map)
 
 }
-# createDisjointTranscripts
+#' createDisjointTranscripts
+#'
 #' @param dt Object of class "Transcripts"
 #' @param disjoint Object from disjoinExons()
 #' @param map Object from createDisjointMap()
@@ -164,7 +172,9 @@ createDisjointTranscripts = function(dt, disjoint, map){
 
 
 #dt is from createDisjointTranscripts
-# createDisjointGenes
+
+#' createDisjointGenes
+#'
 #' @param dt Disjoint_Transcripts object from createDisjointTranscripts
 #' @return reduces a gene_id to its disjoint exon bins
 createDisjointGenes = function(dt){
@@ -178,7 +188,9 @@ createDisjointGenes = function(dt){
 }
 
 #dg is from createDisjointGenes
-# createDisjointGeneLoci
+
+#'  createDisjointGeneLoci
+#'
 #' @param dg Object from createDisjointGenes
 #' @return finds overlapping gene regions and merges them into a gene loci.
 createDisjointGeneLoci = function(dg){
@@ -231,7 +243,8 @@ createDisjointGeneLoci = function(dg){
 	return(dg)
 	
 }
-# appendGeneLocus
+#' appendGeneLocus
+#'
 #' @param from data.table with a gene_locus_id field
 #' @param to data.table to have a gene_locus_id_field
 #' @return The _to_ input with a gene_locus_id field
@@ -244,7 +257,8 @@ appendGeneLocus = function(from,to){
 	dt$gene_locus_id = udg[dt,gene_locus_id]
 	return(dt)
 }
-# getPCExons
+#' getPCExons
+#'
 #' @param gtf Transcripts data object
 #' @param keep_seqnames which chromosomes to keep in the gtf
 #' @return gtf with only protein coding exon data for keep_seqname chromosomes.
@@ -255,7 +269,7 @@ getPCExons = function(gtf, keep_seqnames = c(1:22,"X","Y")){
 			)
 	return(exons)
 }
-# gtfToSimData
+#' gtfToSimData
 #' @param gtf_exons Transcript data object from gtf
 #' @param ignore.strand Should disjoint simulation data be constructed by ignoring strand?
 #' @return all objects necessary to simulate disjoint exons
@@ -880,7 +894,8 @@ geneLocusCounts = function(trans, count_names, by=c("gene_locus_id")){
 	c("\n")
 	return(ret)
 }
-# featureExactTest
+#' featureExactTest
+#'
 #' @param gene_counts data.table of feature counts
 #' @param treatments vector indicating sample groups.  names(treatments) should be feature counts in gene_counts. 
 #' @param field_disp Use this field as tag.wise dispersion instead of asking edgeR for it.  NULL indicates use edgeR.
@@ -945,7 +960,8 @@ geneExactTest = function(..., feature_type="gene") featureExactTest(...,feature_
 disjointExactTest = function(...,feature_type="disjoint") featureExactTest(...,feature_type=feature_type)
 geneLocusExactTest = function(..., feature_type="gene_locus") featureExactTest(..., feature_type=feature_type)
 
-# simDisjointGenomeNonParametric
+#' simDisjointGenomeNonParametric
+#'
 #' @param gtf_data Object from gtfToSimData
 #' @param gene_dist data.frame from which to sample with replacement b_0, b_1, and dispersion triplets.   Column names should be those.
 #' @param treatment vector of numeric 1 and 2 indicating sample assignments.

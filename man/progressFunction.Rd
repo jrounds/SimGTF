@@ -2,6 +2,7 @@
 % Please edit documentation in R/functions.R
 \name{progressFunction}
 \alias{progressFunction}
+\title{progressFunction}
 \usage{
 progressFunction(nrow, foo)
 }
@@ -9,5 +10,8 @@ progressFunction(nrow, foo)
 \item{nrow}{total length of progress}
 
 \item{foo}{function that will be procssed during progress}
+}
+\description{
+progressFunction
 }
 

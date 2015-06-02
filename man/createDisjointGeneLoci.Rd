@@ -2,6 +2,7 @@
 % Please edit documentation in R/functions.R
 \name{createDisjointGeneLoci}
 \alias{createDisjointGeneLoci}
+\title{createDisjointGeneLoci}
 \usage{
 createDisjointGeneLoci(dg)
 }
@@ -10,5 +11,8 @@ createDisjointGeneLoci(dg)
 }
 \value{
 finds overlapping gene regions and merges them into a gene loci.
+}
+\description{
+createDisjointGeneLoci
 }
 

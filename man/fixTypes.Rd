@@ -2,10 +2,14 @@
 % Please edit documentation in R/functions.R
 \name{fixTypes}
 \alias{fixTypes}
+\title{fixTypes}
 \usage{
 fixTypes(d)
 }
 \arguments{
 \item{d}{data.table on which to fix up types to a standard representatation for genomic data}
+}
+\description{
+fixTypes
 }
 

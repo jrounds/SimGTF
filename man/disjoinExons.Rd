@@ -2,6 +2,7 @@
 % Please edit documentation in R/functions.R
 \name{disjoinExons}
 \alias{disjoinExons}
+\title{disjoinExon}
 \usage{
 disjoinExons(dt, ignore.strand = FALSE, id_lead = "dis")
 }
@@ -14,5 +15,8 @@ disjoinExons(dt, ignore.strand = FALSE, id_lead = "dis")
 }
 \value{
 disjoint genome exon data.table
+}
+\description{
+disjoinExon
 }
 

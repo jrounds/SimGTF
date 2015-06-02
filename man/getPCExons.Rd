@@ -2,6 +2,7 @@
 % Please edit documentation in R/functions.R
 \name{getPCExons}
 \alias{getPCExons}
+\title{getPCExons}
 \usage{
 getPCExons(gtf, keep_seqnames = c(1:22, "X", "Y"))
 }
@@ -12,5 +13,8 @@ getPCExons(gtf, keep_seqnames = c(1:22, "X", "Y"))
 }
 \value{
 gtf with only protein coding exon data for keep_seqname chromosomes.
+}
+\description{
+getPCExons
 }
 

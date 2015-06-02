@@ -2,6 +2,7 @@
 % Please edit documentation in R/functions.R
 \name{appendGeneLocus}
 \alias{appendGeneLocus}
+\title{appendGeneLocus}
 \usage{
 appendGeneLocus(from, to)
 }
@@ -12,5 +13,8 @@ appendGeneLocus(from, to)
 }
 \value{
 The _to_ input with a gene_locus_id field
+}
+\description{
+appendGeneLocus
 }
 

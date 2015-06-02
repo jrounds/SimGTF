@@ -2,6 +2,7 @@
 % Please edit documentation in R/functions.R
 \name{readGTF}
 \alias{readGTF}
+\title{readGTF}
 \usage{
 readGTF(file, ...)
 }
@@ -9,5 +10,8 @@ readGTF(file, ...)
 \item{file}{source file to read (e.g. unzipped Ensembl gtf}
 
 \item{...}{other arguments to read.table}
+}
+\description{
+readGTF
 }
 

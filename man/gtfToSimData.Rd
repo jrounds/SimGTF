@@ -2,6 +2,7 @@
 % Please edit documentation in R/functions.R
 \name{gtfToSimData}
 \alias{gtfToSimData}
+\title{gtfToSimData}
 \usage{
 gtfToSimData(gtf_exons, ignore.strand = TRUE)
 }
@@ -12,5 +13,8 @@ gtfToSimData(gtf_exons, ignore.strand = TRUE)
 }
 \value{
 all objects necessary to simulate disjoint exons
+}
+\description{
+gtfToSimData
 }
 

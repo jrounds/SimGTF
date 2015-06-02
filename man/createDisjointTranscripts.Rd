@@ -2,6 +2,7 @@
 % Please edit documentation in R/functions.R
 \name{createDisjointTranscripts}
 \alias{createDisjointTranscripts}
+\title{createDisjointTranscripts}
 \usage{
 createDisjointTranscripts(dt, disjoint, map)
 }
@@ -14,6 +15,9 @@ createDisjointTranscripts(dt, disjoint, map)
 }
 \value{
 exons in dt turned into sub-exon disjoint counting bins organized by transcript_id
+}
+\description{
+createDisjointTranscripts
 }
 \seealso{
 disjointExons, createDisjointMap

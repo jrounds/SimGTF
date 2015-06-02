@@ -2,10 +2,14 @@
 % Please edit documentation in R/functions.R
 \name{as.GRanges}
 \alias{as.GRanges}
+\title{as.GRanges}
 \usage{
 as.GRanges(dt)
 }
 \arguments{
 \item{dt}{data.table to turn into a GRanges object}
+}
+\description{
+as.GRanges
 }
 

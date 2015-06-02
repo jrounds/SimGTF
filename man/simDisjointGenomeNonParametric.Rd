@@ -2,6 +2,7 @@
 % Please edit documentation in R/functions.R
 \name{simDisjointGenomeNonParametric}
 \alias{simDisjointGenomeNonParametric}
+\title{simDisjointGenomeNonParametric}
 \usage{
 simDisjointGenomeNonParametric(gtf_data, gene_dist, treatment, E_lib_size,
   de_prob = 0.5, min_transcripts = 1, max_transcripts = Inf,
@@ -28,5 +29,8 @@ simDisjointGenomeNonParametric(gtf_data, gene_dist, treatment, E_lib_size,
 \item{force_de}{set of gene names to force into the differentially expressed category}
 
 \item{only_sim_transcripts}{Do not simulate the full disjoint exon/genome?}
+}
+\description{
+simDisjointGenomeNonParametric
 }
 

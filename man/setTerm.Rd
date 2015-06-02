@@ -2,10 +2,14 @@
 % Please edit documentation in R/functions.R
 \name{setTerm}
 \alias{setTerm}
+\title{setTerm}
 \usage{
 setTerm(color)
 }
 \arguments{
 \item{color}{what color to change a linux terminal to}
+}
+\description{
+setTerm
 }
 

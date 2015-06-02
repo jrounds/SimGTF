@@ -2,6 +2,7 @@
 % Please edit documentation in R/functions.R
 \name{featureExactTest}
 \alias{featureExactTest}
+\title{featureExactTest}
 \usage{
 featureExactTest(counts, treatments, field_disp = NULL,
   has_sim_truth = TRUE, feature_type = "gene")
@@ -12,5 +13,8 @@ featureExactTest(counts, treatments, field_disp = NULL,
 \item{field_disp}{Use this field as tag.wise dispersion instead of asking edgeR for it.  NULL indicates use edgeR.}
 
 \item{gene_counts}{data.table of feature counts}
+}
+\description{
+featureExactTest
 }
 

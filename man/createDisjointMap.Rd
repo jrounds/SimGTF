@@ -2,6 +2,7 @@
 % Please edit documentation in R/functions.R
 \name{createDisjointMap}
 \alias{createDisjointMap}
+\title{createDisjointMap}
 \usage{
 createDisjointMap(dt, disjoint, ignore.strand = FALSE)
 }
@@ -14,6 +15,9 @@ createDisjointMap(dt, disjoint, ignore.strand = FALSE)
 }
 \value{
 a map between the transcript_id of dt to  to the disjoint exons of disjoint
+}
+\description{
+createDisjointMap
 }
 \seealso{
 disjoinExons
