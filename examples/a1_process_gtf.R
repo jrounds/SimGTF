@@ -24,12 +24,12 @@ if(FALSE){
 
 	gtf_exons = getPCExons(gtf)
 	sim_data = gtfToSimData(gtf_exons)
-	 
+	sim_data = GTFSimData(gtf_exons)
 	save(sim_data, file= "sim_data.Rdata")
 
 
 }
-load("sim_data.Rdata")
+load("../examples/sim_data.Rdata")
 
 	library(data.table)
 	library(GenomicRanges)

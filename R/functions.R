@@ -322,6 +322,8 @@ gtfToSimData = function(gtf_exons, ignore.strand=TRUE){
 	#######################################################################################
 
 	disjoint_transcripts = appendGeneLocus(disjoint_genes, disjoint_transcripts)
+	setkey(disjoint_transcripts, "gene_locus_id")
+	setkey(disjoint_genes, "gene_locus_id")
 	return(environment())
 	
 	
@@ -879,7 +881,7 @@ extractDisjointGenomeCounts = function(trans_ex,counts,verbose=TRUE){
 	}, env = sim)
 	return(sim)
 }
-geneLocusCounts = function(trans, count_names, by=c("gene_locus_id")){
+geneLocusCounts2 = function(trans, count_names, by=c("gene_locus_id")){
 	op = progressFunction(nrow(trans),function(.SD){
 		ret = list()
 		ret$actually_de = any(.SD$actually_de)
@@ -891,7 +893,7 @@ geneLocusCounts = function(trans, count_names, by=c("gene_locus_id")){
 		return(ret)
 	})
 	ret = trans[,op(.SD), by=by]
-	c("\n")
+	cat("\n")
 	return(ret)
 }
 #' featureExactTest
@@ -918,7 +920,7 @@ featureExactTest = function(counts,treatments, field_disp=NULL, has_sim_truth=TR
 	y = calcNormFactors(y)
 	
 	if(!is.null(field_disp)){
-		disp = gene_counts[[field_disp]][m]
+		disp = counts[[field_disp]][m]
 		y$tagwise.dispersion = disp
 	}else{
 		y = estimateDisp(y, prior.df=10)
@@ -938,7 +940,7 @@ featureExactTest = function(counts,treatments, field_disp=NULL, has_sim_truth=TR
 	}
 	counts[[ret_total]] = row
 	counts[[ret_tested]] = m
-	oounts[[ret_raw]] = gene_counts[[ret_bh]] = rep(1,ngene)
+	counts[[ret_raw]] = counts[[ret_bh]] = rep(1,ngene)
 	x = counts[[ret_bh]]
 	x[m] = q
 	counts[[ret_bh]] = x
@@ -972,16 +974,20 @@ geneLocusExactTest = function(..., feature_type="gene_locus") featureExactTest(.
 #' @param group_transcripts_id what field should transcripts be grouped by for min_transcripts/max_transcripts
 #' @param only_sim_transcripts Do not simulate the full disjoint exon/genome?
 #' @param force_de set of gene names to force into the differentially expressed category
-simDisjointGenomeNonParametric = function(gtf_data, gene_dist, treatment, E_lib_size,	
-				de_prob=.50, min_transcripts=1, max_transcripts=Inf, 
+simDisjointGenomeNonParametric = function(gtf_data, pheno,
 				group_transcripts_id = "gene_locus_id", only_sim_trans=FALSE, force_de = NULL){
 		
-	if(any(is.null(names(treatment))) || any(names(treatment) != names(E_lib_size))){
-		stop("Count names should be in treatments and lib_sizes.")
-	}
-	dt = gtf_data$disjoint_transcripts
-	sdist= gene_dist
+	gene_dist = pheno$trans_dist
+	treatment = pheno$treatments
+	E_lib_size = pheno$E_lib_size
+	de_prob = pheno$de_prob
+	min_transcripts = pheno$min_transcripts
+	max_transcripts = pheno$max_transcripts
 	
+	
+	dt = copy(gtf_data$disjoint_transcripts)
+	setkey(dt, "gene_locus_id")
+	sdist= gene_dist
 	fragment_size = 150  #not really used but for back of envelope calculations
 	count_name = names(treatment)
 	zero_prob = 0
@@ -1011,7 +1017,6 @@ simDisjointGenomeNonParametric = function(gtf_data, gene_dist, treatment, E_lib_
 
 	
 	e = environment()
-	class(e) = c(class(e), "transcript_simulation")
 	return(appendSimInfo(e))				
 				
 }
@@ -1057,4 +1062,136 @@ simWithForceDE = function(force_de,dt, sdist, treatment, E_lib_size,
 	return(appendSimInfo(e))				
 				
 }
+
+testMetrics = function(var,s, by = .001){
+	cat("Metrics for ", var, "\n")
+	at = seq(0,1,by=by)
+	p = s[[var]]
+	#p = p.adjust(s[[var]], "BH")
+	#p[is.na(p)] = 1
+	fdr = numeric(length=length(at))
+	power = numeric(length=length(at))
+	fpr = numeric(length=length(at))
+	tpr = numeric(length=length(at))
+	for(i in seq_along(at)){
+		alpha = at[i]
+		sig = p <= alpha
+		nsig =sum(p<= alpha)
+		nfd =  sum(sig & !s$actually_de)
+		
+		ntd = sum(sig & s$actually_de)
+		nde = sum(s$actually_de)
+		nneg = sum(!s$actually_de)
+		tpr[i] = ntd/nde
+		fpr[i] = nfd/nneg
+		fdr[i] = nfd/nsig
+	}
+	return(list(alpha=at,fpr=fpr,tpr=tpr, fdr=fdr))
+	
+
+}
+calcAUC = function(fpr,tpr){
+	auc = 0
+	for(i in seq_along(fpr)){
+		if(i == length(fpr))
+			next
+		f0 = fpr[i]
+		f1 = fpr[i+1]
+		fdiff = f1-f0
+		t0 = tpr[i]
+		t1 = tpr[i+1]
+		tdiff = t1-t0
+		#rect
+		a1 = fdiff*t0
+		#triangle
+		a2 = tdiff*fdiff/2
+		auc = auc + a1 
+	}
+	return(auc)
+}
+
+allTestMetrics = function(s){
+	#assumes if there is a "raw" then there is an FDR corrected not raw...
+	raw = unlist(grep("_raw", colnames(s), fixed=TRUE, value=TRUE))
+	vars = unlist(gsub("_raw","",raw))
+	ret = lapply(vars, testMetrics, s)
+	names(ret) = vars
+	return(ret)
+}
+
+plotROC =  function(tmr, which = NULL, xmask=0){
+	if(is.null(which))
+		which = names(tmr)
+	col = 1:length(which) + 1
+	i = 1
+	w = which[i]
+	x = tmr[[w]]$fpr
+	y = tmr[[w]]$tpr
+	m = x >= xmask
+	plot(x[m], y[m],xlim=c(0,1),ylim=c(0,1), col=col[i],type="l",
+		xlab=expression("False Positive Rate"), ylab="True Positive Rate")
+	for(i in 1:length(which)){
+		w = which[i]
+		x = tmr[[w]]$fpr
+		y = tmr[[w]]$tpr
+		m = x >= xmask
+		lines(x[m],y[m],col=col[i])
+	
+		
+	}
+	abline(a=0,b=1, lty=2, lwd=2)
+	legend("bottomright", which, col=col,pch=19)
+
+}
+plotFDR = function(tmr, which = NULL, xmask=0){
+	if(is.null(which))
+		which = names(tmr)
+	col = 1:length(which) + 1
+	i = 1
+	w = which[i]
+	x = tmr[[w]]$alpha
+	y = tmr[[w]]$fdr
+	m = x >= xmask
+	plot(x[m], y[m],xlim=c(0,.2),ylim=c(0,.2), col=col[i],type="l",
+		xlab=expression("Nominal FDR"), ylab="Observed FDR")
+	for(i in 1:length(which)){
+		w = which[i]
+		x = tmr[[w]]$alpha
+		y = tmr[[w]]$fdr
+		m = x >= xmask
+		lines(x[m],y[m],col=col[i])
+	
+		
+	}
+	abline(a=0,b=1, lty=2, lwd=2)
+	legend("topleft", which, col=col,pch=19)
+	
+	
+
+}
+
+
+plotTPR = function(tmr, which=NULL){
+if(is.null(which))
+		which = names(tmr)
+	col = 1:length(which) + 1
+	i = 1
+	w = which[i]
+	plot(log(tmr[[w]]$alpha,10), tmr[[w]]$tpr,xlim=c(-3,0),ylim=c(0,1), col=col[i],type="l",
+		xlab=expression("log10 Nominal FDR"), ylab="TPR")
+	for(i in 1:length(which)){
+		w = which[i]
+		lines(log(tmr[[w]]$alpha,10), tmr[[w]]$tpr, col=col[i])
+	
+		
+	}
+	abline(v=log(.05,10), lty=2, lwd=2)
+	legend("topleft", which, col=col,pch=19)
+	
+	
+
+}
+
+
+
 
